@@ -17,7 +17,7 @@ function App() {
 
   return (
     <main className="contenedor">
-      <h1>Mi lista de tareas</h1>
+      <h1>Mi primera aplicación publicada en Vercel</h1>
       <p>Aplicación desarrollada con React y Vite</p>
 
       <div className="formulario">
