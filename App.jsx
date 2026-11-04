@@ -1,42 +1,73 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 
 function App() {
-  const [tareas, setTareas] = useState([])
-  const [nuevaTarea, setNuevaTarea] = useState('')
+  const [estudiantes, setEstudiantes] = useState(() => {
+    const guardados = localStorage.getItem('estudiantes')
+    return guardados ? JSON.parse(guardados) : []
+  })
+  const [nombre, setNombre] = useState('')
+  const [codigo, setCodigo] = useState('')
+  const [carrera, setCarrera] = useState('')
 
-  const agregarTarea = () => {
-    if (nuevaTarea.trim() === '') return
-    setTareas([...tareas, { id: Date.now(), nombre: nuevaTarea }])
-    setNuevaTarea('')
+  useEffect(() => {
+    localStorage.setItem('estudiantes', JSON.stringify(estudiantes))
+  }, [estudiantes])
+
+  const registrarEstudiante = () => {
+    if (nombre.trim() === '' || codigo.trim() === '' || carrera.trim() === '') return
+    setEstudiantes([
+      ...estudiantes,
+      { id: Date.now(), nombre, codigo, carrera }
+    ])
+    setNombre('')
+    setCodigo('')
+    setCarrera('')
   }
 
-  const eliminarTarea = (id) => {
-    setTareas(tareas.filter(tarea => tarea.id !== id))
+  const eliminarEstudiante = (id) => {
+    setEstudiantes(estudiantes.filter(e => e.id !== id))
   }
 
   return (
     <main className="contenedor">
-      <h1>Mi primera aplicación publicada en Vercel</h1>
-      <p>Aplicación desarrollada con React y Vite</p>
+      <h1>Gestión académica</h1>
+      <p>Registro de estudiantes con React y Vite</p>
 
       <div className="formulario">
         <input
           type="text"
-          placeholder="Escribe una tarea"
-          value={nuevaTarea}
-          onChange={(e) => setNuevaTarea(e.target.value)}
+          placeholder="Nombre"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
         />
-        <button onClick={agregarTarea}>Agregar</button>
+        <input
+          type="text"
+          placeholder="Código"
+          value={codigo}
+          onChange={(e) => setCodigo(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Carrera"
+          value={carrera}
+          onChange={(e) => setCarrera(e.target.value)}
+        />
+        <button onClick={registrarEstudiante}>Registrar</button>
       </div>
 
-      <h2>Tareas registradas: {tareas.length}</h2>
+      <h2>Estudiantes registrados: {estudiantes.length}</h2>
 
       <ul>
-        {tareas.map(tarea => (
-          <li key={tarea.id}>
-            {tarea.nombre}
-            <button onClick={() => eliminarTarea(tarea.id)}>Eliminar</button>
+        {estudiantes.map(e => (
+          <li key={e.id}>
+            <div className="datos">
+              <strong>{e.nombre}</strong>
+              <small>Código: {e.codigo} · {e.carrera}</small>
+            </div>
+            <button className="eliminar" onClick={() => eliminarEstudiante(e.id)}>
+              Eliminar
+            </button>
           </li>
         ))}
       </ul>
